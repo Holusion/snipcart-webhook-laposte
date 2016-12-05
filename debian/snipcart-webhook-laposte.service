@@ -1,0 +1,8 @@
+[Unit]
+Description=golang render client service
+
+[Service]
+ExecStart=/usr/bin/snipcart-webhook-laposte
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+Source: snipcart-webhook-laposte
+Section: extras
+Priority: extra
+Maintainer: Sebastien Dumetz <s.dumetz@holusion.com>
+Build-Depends: debhelper (>= 8.0.0), dh-systemd (>=1.18~bpo70+1)
+Standards-Version: 3.9.6
+Homepage: https://github.com/Holusion/snipcart-webhook-laposte
+Vcs-Git: git@github.com:Holusion/snipcart-webhook-laposte.git
+
+Package: snipcart-webhook-laposte
+Depends:
+Architecture: any
+Description: Snipcart webhook using LaPoste's developpers API

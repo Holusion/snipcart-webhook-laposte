@@ -1,0 +1,14 @@
+{
+  "eventName": "shippingrates.fetch",
+  "mode": "Live",
+  "createdOn": "2015-02-21T14:58:02.6738454Z",
+  "content": {
+    "token": "22808196-0eff-4a6e-b136-3e4d628b3cf5",
+    "shippingAddressCountry": "CA",
+    "items": [{
+      "id": "1",
+      "quantity": 1
+    }],
+    "totalWeight": 20.00
+  }
+}
