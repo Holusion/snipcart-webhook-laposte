@@ -29,6 +29,9 @@ func Request(country int, shipType int, weight int) ([]shippingRates.Rate,error)
     return nil,err
   }
   rate,err := parseResponse(body)
+  if err != nil {
+    return nil,err
+  }
   return []shippingRates.Rate{*rate},err
 }
 
@@ -36,7 +39,9 @@ var re *regexp.Regexp = regexp.MustCompile(`<span class="h1">([\d,]*) €</span>
 
 func parseResponse(htmlCode []byte) (*shippingRates.Rate,error){
   res := re.FindSubmatch(htmlCode)
-  //replace "," with "."
+  if len(res) < 2 || len(res[1]) == 0 {
+    return nil,fmt.Errorf("Invalid HTML : %s",htmlCode)
+  }
   str := strings.Replace(string(res[1]), ",", ".", 1)
   price, err := strconv.ParseFloat(str,32)
   if err != nil {

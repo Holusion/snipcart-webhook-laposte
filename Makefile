@@ -19,7 +19,7 @@ check:
 
 clean:
 	go clean
-	rm bin/*
+	rm -f bin/*
 
 install: build
 	install -d ${prefix}/bin

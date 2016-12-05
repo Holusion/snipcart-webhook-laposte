@@ -6,7 +6,6 @@ import(
   "io/ioutil"
   "log"
   "encoding/json"
-  "snipcart-webhook-laposte/monkeyapi"
   "snipcart-webhook-laposte/shippingRates"
 )
 
@@ -40,11 +39,21 @@ func GetHandler(c *ApiConn)  http.Handler{
         prices, err = c.ApiRequest("lettre",int(params.Content.Weight))
       }
     }else{
-      log.Printf("Foreign Request : %. Using monkeyapi",params.Content.Country)
+      //Using price modifier
+      if 10 < params.Content.Quantity {
+        prices, err = c.ApiRequest("colis",int(params.Content.Weight))
+      }else{
+        prices, err = c.ApiRequest("lettre",int(params.Content.Weight))
+      }
+      for i := range prices{
+        prices[i].Cost = prices[i].Cost*2;
+      }
+      /*
+      log.Printf("Foreign Request : %s. Using monkeyapi",params.Content.Country)
       //As laposte's API doesn't support foreign shipping, we use their human oriented calculator
       countryCode,ok := monkeyapi.Countries[params.Content.Country]
       if !ok {
-        log.Printf("Unknown country code : %s. Falling back", params.Content.Country)
+        log.Printf("Unknown country code. Falling back", params.Content.Country)
         countryCode = monkeyapi.Countries["US"]
       }
       prices,err = monkeyapi.Request(
@@ -52,6 +61,7 @@ func GetHandler(c *ApiConn)  http.Handler{
         monkeyapi.ShipTypes["Letter"],
         int(params.Content.Weight),
       )
+      */
     }
     if err != nil {
       log.Printf("Error calculating rates : %s",err)
@@ -63,6 +73,8 @@ func GetHandler(c *ApiConn)  http.Handler{
     wrappedPrices := shippingRates.Rates{Rates:prices}
 
     js, err := json.Marshal(wrappedPrices)
+    log.Printf("Computed Rates : %s",js)
+    w.Header().Set("Content-Type", "application/json")
     w.Write(js)
   })
 }

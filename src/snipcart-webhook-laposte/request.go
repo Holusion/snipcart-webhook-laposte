@@ -66,9 +66,25 @@ func parseResponse( body []byte) ([]ApiRes, error){
 }
 
 func resToShippingRates(res []ApiRes) []shippingRates.Rate {
-  rates := make([]shippingRates.Rate,len(res))
-  for i,r := range res{
-    rates[i] = shippingRates.Rate{Cost:r.Price,Description:r.Product,Delivery: 5}
+  var rates []shippingRates.Rate
+  for _,r := range res{
+    //Rule out products we don't need
+    if r.Channel != "en ligne" ||r.Product == "ECOPLI"{
+      continue
+    }
+    if r.Product == "Lettre prioritaire"{
+      rates = append(rates, shippingRates.Rate{
+        Cost:r.Price,
+        Description:r.Product,
+        Delivery: 3,
+      })
+    }else{
+      rates = append(rates, shippingRates.Rate{
+        Cost:r.Price,
+        Description:r.Product,
+        Delivery: 5,
+      })
+    }
   }
   return rates
 }
