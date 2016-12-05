@@ -17,16 +17,19 @@ func GetHandler(c *ApiConn)  http.Handler{
     var prices []shippingRates.Rate
     if r.ContentLength == 0 {
       //empty body
+      log.Printf("Error: No content")
       http.Error(w, "No Content", http.StatusInternalServerError)
       return
     }
     body, err := ioutil.ReadAll(r.Body)
     if err != nil {
+      log.Printf("Error Reading Body : %s",err)
       http.Error(w, err.Error(), http.StatusInternalServerError)
       return
     }
     params, err := Parse(body)
     if err != nil {
+      log.Printf("Error Parsing Body : %s",err)
       http.Error(w, err.Error(), http.StatusInternalServerError)
       return
     }
@@ -37,6 +40,7 @@ func GetHandler(c *ApiConn)  http.Handler{
         prices, err = c.ApiRequest("lettre",int(params.Content.Weight))
       }
     }else{
+      log.Printf("Foreign Request : %. Using monkeyapi",params.Content.Country)
       //As laposte's API doesn't support foreign shipping, we use their human oriented calculator
       countryCode,ok := monkeyapi.Countries[params.Content.Country]
       if !ok {
@@ -50,6 +54,7 @@ func GetHandler(c *ApiConn)  http.Handler{
       )
     }
     if err != nil {
+      log.Printf("Error calculating rates : %s",err)
       http.Error(w, err.Error(), http.StatusInternalServerError)
       return
     }
@@ -70,12 +75,6 @@ func addEnvelope(rates []shippingRates.Rate){
 
 func main() {
   conn := CreateApiConn(os.Getenv("API_KEY"))
-  price, err := conn.ApiRequest("lettre",10)
-  if err != nil {
-    log.Fatalf("Error sending API request : %s", err)
-  }else{
-    log.Printf("Got price for a standard letter : %f€",price[0].Cost)
-  }
   http.Handle("/", GetHandler(conn))
     http.ListenAndServe(":7331", nil)
 }

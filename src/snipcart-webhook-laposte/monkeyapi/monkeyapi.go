@@ -42,5 +42,5 @@ func parseResponse(htmlCode []byte) (*shippingRates.Rate,error){
   if err != nil {
     return nil, err
   }
-  return &shippingRates.Rate{Cost:float32(price)},nil
+  return &shippingRates.Rate{Cost:float32(price), Description:"La Poste Letre Verte", Delivery: 8},nil
 }

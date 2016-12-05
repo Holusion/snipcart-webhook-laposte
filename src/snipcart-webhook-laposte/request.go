@@ -68,7 +68,7 @@ func parseResponse( body []byte) ([]ApiRes, error){
 func resToShippingRates(res []ApiRes) []shippingRates.Rate {
   rates := make([]shippingRates.Rate,len(res))
   for i,r := range res{
-    rates[i] = shippingRates.Rate{Cost:r.Price,Description:r.Product}
+    rates[i] = shippingRates.Rate{Cost:r.Price,Description:r.Product,Delivery: 5}
   }
   return rates
 }
